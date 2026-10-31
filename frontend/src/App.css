@@ -1,0 +1,159 @@
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: #0e0e10;
+  color: #efeff1;
+  font-family: system-ui, sans-serif;
+}
+
+button, input {
+  font: inherit;
+  border-radius: 4px;
+  border: 1px solid #3a3a3d;
+  background: #1f1f23;
+  color: inherit;
+  padding: 6px 10px;
+}
+button { cursor: pointer; }
+button:disabled { opacity: 0.5; cursor: default; }
+
+.app { padding: 12px 16px; }
+
+.header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.header h1 { font-size: 1.2rem; margin: 0; color: #bf94ff; }
+.header__count { color: #adadb8; }
+
+.add-form { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.add-form input { width: 240px; max-width: 100%; }
+.add-form__error { color: #ff6b6b; font-size: 0.9rem; }
+
+.empty { color: #adadb8; }
+
+/* Streams on the left, AI panel on the right. */
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 280px;
+  gap: 12px;
+  align-items: start;
+}
+
+/* Focus layout: 3 columns; the focused tile spans 2x2 in the top-left.
+   `order: -1` moves it visually without moving it in the DOM, and
+   `dense` lets the small tiles fill the gaps around it. */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-auto-flow: dense;
+  gap: 8px;
+}
+.tile--focus {
+  grid-column: span 2;
+  grid-row: span 2;
+  order: -1;
+  outline: 2px solid #9147ff;
+}
+.grid--single { grid-template-columns: minmax(0, 1fr); }
+.grid--single .tile--focus { grid-column: span 1; grid-row: span 1; }
+
+/* Grid layout: equal tiles. --cols is set from React based on stream count.
+   The focused tile keeps its outline (and its audio) but no special size. */
+.grid--equal { grid-template-columns: repeat(var(--cols), minmax(0, 1fr)); }
+.grid--equal .tile--focus { grid-column: auto; grid-row: auto; order: 0; }
+
+.tile {
+  display: flex;
+  flex-direction: column;
+  background: #18181b;
+  border-radius: 6px;
+  overflow: hidden;
+}
+.tile iframe {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  flex: 1;
+  border: 0;
+  display: block;
+}
+.tile__bar { display: flex; }
+.tile__name {
+  flex: 1;
+  text-align: left;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+.tile__name:hover { background: #26262c; }
+.tile__remove { border: 0; border-radius: 0; background: transparent; }
+.tile__remove:hover { background: #5c1f1f; }
+
+/* AI panel */
+.panel {
+  background: #18181b;
+  border-radius: 6px;
+  padding: 12px;
+}
+.panel h2 { font-size: 1rem; margin: 0 0 8px; }
+.panel__status { color: #adadb8; font-size: 0.85rem; margin: 0 0 8px; }
+.panel__note {
+  font-size: 0.85rem;
+  background: #26262c;
+  border-left: 3px solid #9147ff;
+  padding: 6px 8px;
+  margin: 0 0 8px;
+}
+
+.hype { margin-top: 12px; }
+.hype__top { display: flex; justify-content: space-between; font-size: 0.9rem; }
+.hype__track {
+  position: relative;
+  height: 8px;
+  background: #26262c;
+  border-radius: 4px;
+  margin: 4px 0;
+  overflow: hidden;
+}
+.hype__bar { height: 100%; background: #6441a5; transition: width 0.5s; }
+.hype__bar--hot { background: #ff7a45; }
+/* The Director's threshold (2.0x) sits at the middle of a 0–4x scale. */
+.hype__threshold {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 2px;
+  background: #efeff1;
+  opacity: 0.6;
+}
+.hype__detail { color: #adadb8; font-size: 0.8rem; }
+
+.pulse { font-size: 0.85rem; margin-top: 4px; line-height: 1.35; }
+.pulse__age { color: #adadb8; font-size: 0.75rem; }
+.mood {
+  display: inline-block;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  padding: 1px 6px;
+  border-radius: 8px;
+  margin-right: 6px;
+  background: #3a3a3d;
+}
+.mood--hype { background: #ff7a45; color: #0e0e10; }
+.mood--chill { background: #3d8bfd; color: #0e0e10; }
+.mood--funny { background: #f5c542; color: #0e0e10; }
+.mood--angry { background: #e5484d; color: #0e0e10; }
+
+/* Phones and narrow windows: everything in one column. */
+@media (max-width: 900px) {
+  .layout { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 700px) {
+  .grid, .grid--equal { grid-template-columns: minmax(0, 1fr); }
+  .tile--focus { grid-column: span 1; grid-row: span 1; }
+}
